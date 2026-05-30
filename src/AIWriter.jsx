@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const ANTHROPIC_API_KEY = "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"
+const ANTHROPIC_API_KEY = ""
 
 function AIWriter({ onUseDescription }) {
   const [productName, setProductName] = useState("")
