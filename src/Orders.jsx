@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react"
 import { supabase } from "./supabase"
 
+const PURPLE = "#534AB7"
+const CORAL = "#D85A30"
+const DARK = "#26215C"
+
 function Orders({ storeName }) {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -23,30 +27,34 @@ function Orders({ storeName }) {
       .from("orders")
       .update({ status: newStatus })
       .eq("id", orderId)
-
     if (!error) {
       setOrders(orders.map(order => order.id === orderId ? { ...order, status: newStatus } : order))
     }
   }
 
-  const statusColor = (status) => {
-    if (status === "pending") return { bg: "#fff3cd", color: "#856404" }
-    if (status === "processing") return { bg: "#cce5ff", color: "#004085" }
-    if (status === "shipped") return { bg: "#d4edda", color: "#155724" }
-    if (status === "delivered") return { bg: "#d1e7dd", color: "#0f5132" }
-    return { bg: "#f8f9fa", color: "#555" }
+  const statusStyle = (status) => {
+    if (status === "pending") return { bg: "#FAEEDA", color: "#BA7517" }
+    if (status === "processing") return { bg: "#EEEDFE", color: PURPLE }
+    if (status === "shipped") return { bg: "#FAECE7", color: CORAL }
+    if (status === "delivered") return { bg: "#E1F5EE", color: "#0F6E56" }
+    return { bg: "#f0f0f0", color: "#888" }
   }
 
-  if (loading) return <p style={{ color: "#888" }}>Loading orders...</p>
+  if (loading) return (
+    <div style={{ textAlign: "center", padding: "80px", color: "#888" }}>Loading orders...</div>
+  )
 
   return (
     <div>
-      <h1 style={{ color: "#1a1a2e", marginBottom: "32px" }}>Orders</h1>
+      <div style={{ marginBottom: "32px" }}>
+        <h1 style={{ color: DARK, margin: "0 0 4px", fontSize: "26px", fontWeight: "800" }}>Orders</h1>
+        <p style={{ color: "#888", margin: 0, fontSize: "14px" }}>{orders.length} total orders</p>
+      </div>
 
       {orders.length === 0 && (
-        <div style={{ textAlign: "center", padding: "80px", background: "white", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+        <div style={{ textAlign: "center", padding: "80px", background: "white", borderRadius: "16px" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🛒</div>
-          <h3 style={{ color: "#1a1a2e", marginBottom: "8px" }}>No orders yet</h3>
+          <h3 style={{ color: DARK, marginBottom: "8px", fontWeight: "700" }}>No orders yet</h3>
           <p style={{ color: "#888" }}>When customers place orders they will appear here</p>
         </div>
       )}
@@ -54,52 +62,55 @@ function Orders({ storeName }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {orders.map((order) => {
           const items = JSON.parse(order.items)
-          const colors = statusColor(order.status)
+          const s = statusStyle(order.status)
           return (
-            <div key={order.id} style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-              
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <div key={order.id} style={{ background: "white", borderRadius: "16px", padding: "28px", boxShadow: "0 2px 12px rgba(0,0,0,0.04)", border: "1.5px solid #f0eeff" }}>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
                 <div>
-                  <h3 style={{ margin: "0 0 4px", color: "#1a1a2e" }}>{order.customer_name}</h3>
-                  <p style={{ margin: 0, color: "#888", fontSize: "14px" }}>📞 {order.customer_phone}</p>
+                  <h3 style={{ margin: "0 0 6px", color: DARK, fontWeight: "700", fontSize: "17px" }}>{order.customer_name}</h3>
+                  <p style={{ margin: "0 0 4px", color: "#888", fontSize: "14px" }}>📞 {order.customer_phone}</p>
                   <p style={{ margin: 0, color: "#888", fontSize: "14px" }}>📍 {order.customer_address}</p>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <span style={{ background: colors.bg, color: colors.color, padding: "4px 12px", borderRadius: "20px", fontSize: "13px", fontWeight: "bold" }}>
+                  <span style={{ background: s.bg, color: s.color, padding: "5px 14px", borderRadius: "20px", fontSize: "13px", fontWeight: "700" }}>
                     {order.status}
                   </span>
-                  <p style={{ margin: "8px 0 0", color: "#6C63FF", fontWeight: "bold", fontSize: "18px" }}>SAR {order.total}</p>
+                  <p style={{ margin: "10px 0 0", color: CORAL, fontWeight: "800", fontSize: "20px" }}>SAR {order.total}</p>
                 </div>
               </div>
 
-              <div style={{ background: "#f8f7ff", borderRadius: "10px", padding: "12px", marginBottom: "16px" }}>
+              <div style={{ background: "#f8f7ff", borderRadius: "10px", padding: "14px 18px", marginBottom: "20px" }}>
                 {items.map((item, i) => (
-                  <p key={i} style={{ margin: "4px 0", color: "#555", fontSize: "14px" }}>
-                    {item.name} x{item.qty} — SAR {item.price * item.qty}
-                  </p>
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: i < items.length - 1 ? "8px" : 0 }}>
+                    <span style={{ color: "#555", fontSize: "14px" }}>{item.name} x{item.qty}</span>
+                    <span style={{ color: PURPLE, fontWeight: "600", fontSize: "14px" }}>SAR {item.price * item.qty}</span>
+                  </div>
                 ))}
               </div>
 
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {["pending", "processing", "shipped", "delivered"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => updateStatus(order.id, status)}
-                    style={{
-                      padding: "6px 16px",
-                      background: order.status === status ? "#6C63FF" : "transparent",
-                      color: order.status === status ? "white" : "#888",
-                      border: "1.5px solid",
-                      borderColor: order.status === status ? "#6C63FF" : "#e0e0e0",
-                      borderRadius: "20px",
-                      fontSize: "13px",
-                      cursor: "pointer",
-                      fontWeight: order.status === status ? "bold" : "normal"
-                    }}
-                  >
-                    {status}
-                  </button>
-                ))}
+              <div>
+                <p style={{ color: "#888", fontSize: "12px", margin: "0 0 10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>Update Status</p>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {["pending", "processing", "shipped", "delivered"].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => updateStatus(order.id, status)}
+                      style={{
+                        padding: "6px 16px",
+                        background: order.status === status ? PURPLE : "transparent",
+                        color: order.status === status ? "white" : "#888",
+                        border: `1.5px solid ${order.status === status ? PURPLE : "#e0e0e0"}`,
+                        borderRadius: "20px",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                        fontWeight: order.status === status ? "700" : "400"
+                      }}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
               </div>
 
             </div>
