@@ -1,13 +1,16 @@
 import { useState } from "react"
 import { supabase } from "./supabase"
+import { t } from "./translations"
 
 const PURPLE = "#534AB7"
 const CORAL = "#D85A30"
 const DARK = "#26215C"
 
-function SignUp({ onSuccess, onLogin }) {
+function SignUp({ onSuccess, onLogin, lang = "en" }) {
   const [form, setForm] = useState({ name: "", email: "", password: "", storeName: "" })
   const [loading, setLoading] = useState(false)
+  const txt = t[lang]
+  const isArabic = lang === "ar"
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -37,10 +40,10 @@ function SignUp({ onSuccess, onLogin }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Segoe UI', Arial, sans-serif", direction: isArabic ? "rtl" : "ltr" }}>
 
       {/* Left Side */}
-      <div style={{ width: "45%", background: `linear-gradient(160deg, #EEEDFE, #FAECE7)`, display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px", position: "relative" }}>
+      <div style={{ width: "45%", background: "linear-gradient(160deg, #EEEDFE, #FAECE7)", display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "48px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: `linear-gradient(135deg, ${PURPLE}, ${CORAL})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "white", fontWeight: "bold", fontSize: "18px" }}>T</span>
@@ -48,17 +51,12 @@ function SignUp({ onSuccess, onLogin }) {
           <span style={{ fontWeight: "bold", fontSize: "22px", color: DARK }}>Tajir</span>
         </div>
         <h2 style={{ fontSize: "36px", fontWeight: "800", color: DARK, marginBottom: "16px", lineHeight: "1.2" }}>
-          Start selling online today
+          {txt.signUpTitle}
         </h2>
         <p style={{ color: "#666", fontSize: "16px", lineHeight: "1.8", marginBottom: "40px" }}>
-          Join thousands of merchants who use Tajir to build beautiful stores and grow their business.
+          {txt.signUpSubtitle}
         </p>
-        {[
-          "✓ Free forever plan",
-          "✓ AI product descriptions",
-          "✓ Your own store link",
-          "✓ Saudi payments ready",
-        ].map(item => (
+        {[txt.checkFree, txt.checkAI, txt.checkLink, txt.checkPayments].map(item => (
           <p key={item} style={{ color: PURPLE, fontWeight: "600", fontSize: "15px", margin: "0 0 10px" }}>{item}</p>
         ))}
       </div>
@@ -66,14 +64,14 @@ function SignUp({ onSuccess, onLogin }) {
       {/* Right Side */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "60px", background: "white" }}>
         <div style={{ width: "100%", maxWidth: "400px" }}>
-          <h2 style={{ fontSize: "28px", fontWeight: "800", color: DARK, margin: "0 0 8px" }}>Create your account</h2>
-          <p style={{ color: "#888", margin: "0 0 32px", fontSize: "15px" }}>Get your store live in minutes</p>
+          <h2 style={{ fontSize: "28px", fontWeight: "800", color: DARK, margin: "0 0 8px" }}>{txt.createAccount}</h2>
+          <p style={{ color: "#888", margin: "0 0 32px", fontSize: "15px" }}>{txt.getStoreLive}</p>
 
           {[
-            { label: "Your Name", name: "name", type: "text", placeholder: "e.g. Mohammed Al-Rashid" },
-            { label: "Email", name: "email", type: "email", placeholder: "you@example.com" },
-            { label: "Password", name: "password", type: "password", placeholder: "••••••••" },
-            { label: "Store Name", name: "storeName", type: "text", placeholder: "e.g. Luxe Abayas" },
+            { label: txt.yourName, name: "name", type: "text", placeholder: txt.namePlaceholder },
+            { label: txt.email, name: "email", type: "email", placeholder: txt.emailPlaceholder },
+            { label: txt.password, name: "password", type: "password", placeholder: txt.passwordPlaceholder },
+            { label: txt.storeName, name: "storeName", type: "text", placeholder: txt.storeNamePlaceholder },
           ].map((field) => (
             <div key={field.name} style={{ marginBottom: "18px" }}>
               <label style={{ display: "block", fontSize: "13px", color: "#555", marginBottom: "6px", fontWeight: "600" }}>
@@ -94,12 +92,13 @@ function SignUp({ onSuccess, onLogin }) {
             onClick={handleSubmit}
             style={{ width: "100%", padding: "14px", background: loading ? "#b0acf5" : CORAL, color: "white", border: "none", borderRadius: "10px", fontSize: "16px", fontWeight: "700", cursor: "pointer", marginTop: "8px" }}
           >
-            {loading ? "Creating your store..." : "Create My Store — It's Free →"}
+            {loading ? txt.creating : txt.createMyStore}
           </button>
 
           <p style={{ textAlign: "center", color: "#888", fontSize: "13px", marginTop: "20px" }}>
-            Already have an account?{" "}
-<span onClick={onLogin} style={{ color: PURPLE, cursor: "pointer", fontWeight: "600" }}>Log in</span>          </p>
+            {txt.alreadyAccount}{" "}
+            <span onClick={onLogin} style={{ color: PURPLE, cursor: "pointer", fontWeight: "600" }}>{txt.loginLink}</span>
+          </p>
         </div>
       </div>
     </div>

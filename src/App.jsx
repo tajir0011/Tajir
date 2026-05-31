@@ -54,9 +54,8 @@ function App() {
     </div>
   )
   if (page === "dashboard") return <Dashboard storeName={merchant.storeName} merchantName={merchant.name} />
-  if (page === "signup") return <SignUp onSuccess={(data) => { setMerchant(data); setPage("dashboard") }} onLogin={() => setPage("login")} />
-  if (page === "login") return <Login onSuccess={(data) => { setMerchant(data); setPage("dashboard") }} onSignUp={() => setPage("signup")} />
-
+  if (page === "signup") return <SignUp onSuccess={(data) => { setMerchant(data); setPage("dashboard") }} onLogin={() => setPage("login")} lang={lang} />   
+  if (page === "login") return <Login onSuccess={(data) => { setMerchant(data); setPage("dashboard") }} onSignUp={() => setPage("signup")} lang={lang} />
   return (
     <div style={{ fontFamily: "'Segoe UI', Arial, sans-serif", margin: 0, padding: 0, color: DARK, direction: isArabic ? "rtl" : "ltr" }}>
 
